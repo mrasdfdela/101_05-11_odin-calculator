@@ -1,3 +1,19 @@
-h1  {
-    background-color: grey;
+textarea {
+    width: 50%;
+    resize: none;
+}
+
+.container {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap-reverse;
+}
+
+.num, .operator {
+    flex-basis: 25%;
+}
+
+.eval, .zero {
+    flex-basis: 50%;
 }
