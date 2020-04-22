@@ -1,31 +1,6 @@
-const buttons = [
-    { text: "=", type: "eval" },
-    { text: "Clear", type: "eval" },
-    { text: "0", type: "zero" },
-    { text: ".", type: "num" },
-    { text: "/", type: "operator" },
-    { text: "1", type: "num" },
-    { text: "2", type: "num" },
-    { text: "3", type: "num" },
-    { text: "*", type: "operator" },
-    { text: "4", type: "num" },
-    { text: "5", type: "num" },
-    { text: "6", type: "num" },
-    { text: "-", type: "operator" },
-    { text: "7", type: "num" },
-    { text: "8", type: "num" },
-    { text: "9", type: "num" },
-    { text: "+", type: "operator" }
-]
-let savedInputs = {
-    firstNum: "",
-    operation: "",
-    secondNum: "",
-    solution: true
-}
 display = document.querySelector("#display")
 
-function createBtn(buttons) {
+function createBtn(buttons) { //create buttons using JSON list
     var container = document.querySelector(".container")
     buttons.forEach( button => {
         newBtn = document.createElement("button")
@@ -36,26 +11,25 @@ function createBtn(buttons) {
     })
 }
 
-function inputListeners() {
+function inputListeners() { // create listeners for button presses
     buttonEls = document.querySelectorAll("button")
 
     buttonEls.forEach( btn => {
-        btn.addEventListener("click", function(e) {
-            e.preventDefault()
-            
+        btn.addEventListener("click", function(e) { 
             input = this.innerText
+            // clear display or handle input
             input == "Clear" ? clearDisplay(true) : inputHandler(input) 
         })
     })
 }
 
-function inputHandler(input) {
+function inputHandler(input) { // handle input from button
     savedInputs.firstNum == '∞' ? savedInputs.firstNum = "" :
 
     input1 = (savedInputs.firstNum=="")
     input2 = (savedInputs.secondNum=="")
     input3 = (savedInputs.operation=="")
-    inputO = ('+-*/='.includes(input) )
+    inputO = ('+-x/='.includes(input) )
     solution = (savedInputs.solution == true)
 
     if (!input3 && inputO) { // 2nd number exists & input is an operator
@@ -66,16 +40,16 @@ function inputHandler(input) {
         savedInputs.secondNum = `${savedInputs.secondNum}${input}`
     } else if (!input2 && input3) { // operator exists, no 2nd number
         savedInputs.secondNum = input
-    } else if (!input1 && '+-*/'.includes(input)) { // 1st number exists & operator
+    } else if (!input1 && '+-x/'.includes(input)) { // 1st number exists & operator
         savedInputs.operation = input
-    } else if (!input1 && input=='=') {
+    } else if (!input1 && input=='=') { // do nothing if 1st number exists & input is equal
         return
-    } else if (!input1 && solution) {
+    } else if (!input1 && solution) { // if 1st num is a solution, create new 1st number
         savedInputs.firstNum = input
         savedInputs.solution = false
-    } else if (!input1) {
+    } else if (!input1) { // if 1st number exists, update number
         savedInputs.firstNum = `${savedInputs.firstNum}${input}`
-    } else if (input1) {
+    } else if (input1) { // if 1st number doesn't exist, create it
         savedInputs.firstNum = input
     }
 
@@ -91,6 +65,7 @@ function operate(i) {
     num1 = Number(i.firstNum)
     num2 = Number(i.secondNum)
 
+    // process results of operation
     var result
     switch(i.operation) {
         case "+":
@@ -99,7 +74,7 @@ function operate(i) {
         case "-":
             result = num1 - num2
             break
-        case "*":
+        case "x":
             result = num1 * num2
             break
         case "/":
@@ -107,10 +82,12 @@ function operate(i) {
             break
     }
 
+    // update display with results
     i.firstNum = result
     i.solution = true
     updateDisplay()
     
+    // handle operation when dividing by zero
     if (result==Infinity) {
         clearDisplay(true)
         savedInputs.solution = false
@@ -119,12 +96,13 @@ function operate(i) {
         return parseFloat(result.toFixed(5)) // handle overflowing decimals
     }
 }
-
+// update display
 function updateDisplay() {
     clearDisplay()
     i = savedInputs
     display.value = `${i.firstNum} ${i.operation} ${i.secondNum}`
 }
+// clear display with option to clear all memory
 function clearDisplay(clearMemory = false) {
     if (clearMemory == true) {
         for (key in savedInputs) {
@@ -134,6 +112,7 @@ function clearDisplay(clearMemory = false) {
     display.value = ''
 }
 
+// initialize calculator
 createBtn(buttons)
 inputListeners()
 clearDisplay(true)
